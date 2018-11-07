@@ -18,9 +18,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+      <h1> Bloc Chat </h1>
       <RoomList firebase={firebase} />
       </div>
-    
+
     );
   }
 }

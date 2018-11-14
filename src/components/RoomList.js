@@ -10,6 +10,8 @@ class RoomList extends Component {
     };
 
 	this.roomsRef = this.props.firebase.database().ref('rooms');
+  this.handleChange = this.handleChange.bind(this);
+  this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 componentDidMount () {
@@ -20,30 +22,45 @@ componentDidMount () {
      });
 }
 
-createRoom(newRoomName){
-    this.roomsRef.push({
-        name:newRoomName
-      });
-    this.setState({newRoomName:''});
-    }
+handleSubmit(e) {
+    e.preventDefault();
+    if (!this.state.newRoomName) return
+    this.roomsRef.push({ name: this.state.newRoomName })
+    this.setState({ newRoomName: ''})
+  }
 
 handleChange(e) {
     this.setState({newRoomName: e.target.value });
   }
 
+
   render() {
     return (
-    	<div>
-            <ul className='roomList'>
-            {this.state.rooms.map( ( room  ) =>
-             <li key={room.key}>{room.name}</li>
-               )}
-            </ul>
-            <form onSubmit={e=>{e.preventDefault();this.createRoom(this.state.newRoomName)}}>
-            <input type = "text" placeholder="Create new room" value={this.state.newRoomName} onChange={(e)=> this.handleChange(e)}/>
-            <button className="adding_rooms_button">Create</button>
+            <div className='room-list'>
+            <section>
+            <h1>Room List</h1>
+            {this.state.rooms.map((room, index) =>
+              <li
+                key={index}
+                onClick={() => this.props.setActiveRoom(room)}>
+                {room.name}
+              </li>
+          )}
+          </section>
+          <div id="new-room">
+            <form onSubmit={ (e) => this.handleSubmit(e) }>
+              <label>
+                Room Name:
+                <input
+                  type="text"
+                  placeholder="enter room name"
+                  value={this.state.newRoomName}
+                  onChange={ (e) => this.handleChange(e) }/>
+              </label>
+              <input type="submit" value="submit" />
             </form>
-         </div>
+        </div>
+      </div>
      );
    }
  }

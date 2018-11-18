@@ -11,24 +11,16 @@ class MessageList extends Component {
       messages: []
     };
 
-    this.messagesRef = this.props.firebase.database().ref('messages');
-    this.handleChange = this.handleChange.bind(this);
+    this.messagesRef = this.props.firebase.database().ref("messages");
+    this.messageContent = this.messageContent.bind(this);
     this.createMessage = this.createMessage.bind(this);
-    this.handleMessageSubmit = this.handleMessageSubmit.bind(this);
 }
 
 
-componentDidMount() {
-    this.messagesRef.on('child_added', snapshot => {
-      const message = snapshot.val();
-      this.setState({ messages: this.state.messages.concat(message)});
-    });
-  }
-
-handleChange(e) {
+messageContent(e) {
     e.preventDefault();
     this.setState({
-      username: 'user',
+      username: this.props.user,
       content: e.target.value,
       sentAt: this.props.firebase.database.ServerValue.TIMESTAMP,
       roomId: this.props.activeRoom
@@ -36,11 +28,12 @@ handleChange(e) {
   }
 
 createMessage(e){
+    e.preventDefault();
     this.messagesRef.push({
       username: this.state.username,
       content: this.state.content,
       sentAt: this.state.sentAt,
-      roomId: this.props.activeRoom.key
+      roomId: this.props.roomId
     });
     this.setState({
     	username: "",
@@ -50,11 +43,19 @@ createMessage(e){
     })
   }
 
- handleMessageSubmit(e) {
+handleMessageSubmit(e) {
     e.preventDefault();
     this.createMessage();
     this.setState({ content: "" });
   }
+
+      componentDidMount() {
+        this.messagesRef.on('child_added', snapshot => {
+            const message = snapshot.val();
+            message.key = snapshot.key;
+            this.setState({ messages: this.state.messages.concat(message) })
+     });
+   }
 
 
  render() {

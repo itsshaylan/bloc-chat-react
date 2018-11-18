@@ -8,7 +8,6 @@ class User extends Component {
     };
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
-    this.provider = new props.firebase.auth.GoogleAuthProvider();
   }
 
 componentDidMount() {
@@ -35,9 +34,11 @@ render() {
     return (
     	<div>
         	<p>Signed in as: {this.props.userHere}</p>
+                  {!this.state.username ?
                   <button onClick={this.signIn}>Sign in</button>
-                
+                   :
                   <button onClick={this.signOut}>Sign out</button>
+                }
                
       </div>
     )
